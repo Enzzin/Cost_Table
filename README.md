@@ -23,5 +23,5 @@ O **Gerenciador de Tabelas de Custos** é um aplicativo desenvolvido em Python c
 ### 1️⃣ Clone o Repositório
 
 ```bash
-git clone https://github.com/seu-usuario/gerenciador-tabelas-custos.git
-cd gerenciador-tabelas-custos
+git clone https://github.com/Enzzin/Cost_Table
+cd Cost_Table
