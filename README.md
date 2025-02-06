@@ -1,73 +1,27 @@
-#Cost Table
-O Gerenciador de Tabelas de Custos é um aplicativo desenvolvido em Python com interface gráfica utilizando Tkinter. Ele foi criado para facilitar o controle e a organização de custos em diferentes projetos ou categorias, permitindo a criação de múltiplas tabelas, inserção, edição e remoção de itens, além da persistência dos dados em arquivos JSON.
+# Gerenciador de Tabelas de Custos
 
-Funcionalidades
-Gerenciamento de Múltiplas Tabelas:
-Crie, selecione e apague tabelas para organizar os custos por projeto ou categoria.
+O **Gerenciador de Tabelas de Custos** é um aplicativo desenvolvido em Python com interface gráfica utilizando Tkinter. Ele permite criar e gerenciar múltiplas tabelas de custos, adicionando, editando e removendo itens de forma intuitiva. O aplicativo salva os dados localmente, garantindo persistência das informações.
 
-Inserção, Edição e Remoção de Itens:
-Adicione itens informando nome, custo unitário e quantidade. O aplicativo calcula automaticamente o total por item e atualiza o total geral da tabela. É possível editar e remover itens conforme necessário.
+## 📌 Funcionalidades
 
-Persistência de Dados:
-Selecione uma pasta para salvar os dados. O aplicativo armazena todas as informações em arquivos JSON, permitindo que você retome seu trabalho exatamente de onde parou em futuras execuções.
+- 📂 **Gerenciamento de múltiplas tabelas**: crie, selecione e exclua tabelas facilmente.
+- ➕ **Inserção de itens**: adicione nome, custo unitário e quantidade, com cálculo automático do total.
+- ✏️ **Edição e remoção**: modifique ou exclua qualquer item da tabela.
+- 💾 **Persistência de dados**: os dados são armazenados em arquivos JSON em uma pasta definida pelo usuário.
+- ❌ **Confirmação para exclusão de tabelas**: evite exclusões acidentais com uma mensagem de confirmação.
+- 🖥️ **Interface amigável**: design intuitivo para facilitar o uso.
 
-Confirmação Personalizada para Exclusão de Tabelas:
-Ao apagar uma tabela, o aplicativo exibe uma janela de confirmação customizada, garantindo que a exclusão seja feita de forma segura.
+## 🛠️ Tecnologias Utilizadas
 
-Interface Amigável:
-Com uma interface limpa e organizada, o aplicativo proporciona uma experiência de uso intuitiva e eficiente.
+- **Python 3.x**
+- **Tkinter** (interface gráfica)
+- **JSON** (armazenamento de dados)
+- **OS & filedialog** (gerenciamento de arquivos e diretórios)
 
-Tecnologias Utilizadas
-Python 3.x
-Tkinter – Biblioteca padrão para interfaces gráficas em Python.
-JSON – Para persistência e armazenamento dos dados.
-OS e filedialog – Para manipulação de arquivos e seleção de pastas.
-Instalação
-Clone o Repositório
+## 🚀 Instalação
 
-bash
-Copy
-Edit
+### 1️⃣ Clone o Repositório
+
+```bash
 git clone https://github.com/seu-usuario/gerenciador-tabelas-custos.git
 cd gerenciador-tabelas-custos
-Crie um Ambiente Virtual (Opcional, mas Recomendado)
-
-bash
-Copy
-Edit
-python -m venv venv
-Em seguida, ative o ambiente virtual:
-
-No Windows:
-bash
-Copy
-Edit
-venv\Scripts\activate
-No macOS/Linux:
-bash
-Copy
-Edit
-source venv/bin/activate
-Instale as Dependências
-
-Este projeto utiliza apenas bibliotecas padrão do Python, portanto, não há necessidade de instalar dependências adicionais. Certifique-se de estar utilizando o Python 3.x.
-
-Uso
-Execute o Aplicativo
-
-No terminal, execute:
-
-bash
-Copy
-Edit
-python app.py
-Selecionar Pasta para Armazenamento dos Dados
-
-Clique no botão "Selecionar Pasta de Dados" e escolha uma pasta onde os dados serão salvos e carregados automaticamente nas próximas execuções.
-
-Gerencie suas Tabelas e Itens
-
-Crie novas tabelas com o botão "Nova Tabela".
-Insira novos itens preenchendo os campos Nome, Custo e Quantidade e clicando em "Inserir".
-Edite ou remova itens conforme necessário.
-Apague uma tabela utilizando o botão "Apagar Tabela", que solicitará confirmação através de uma janela customizada.
