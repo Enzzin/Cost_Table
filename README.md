@@ -17,6 +17,8 @@ O **Gerenciador de Tabelas de Custos** é um aplicativo desenvolvido em Python c
 - **Tkinter** (interface gráfica)
 - **JSON** (armazenamento de dados)
 - **OS & filedialog** (gerenciamento de arquivos e diretórios)
+- **Fpdf** (Converter tabelas para pdf)
+- **Matplotlib** (Gerar graficos baseados nas tabelas e cores)
 
 ## 🚀 Instalação
 
