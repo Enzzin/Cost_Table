@@ -2,13 +2,17 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog, filedialog, colorchooser
 import json
 import os
+from datetime import datetime
+from fpdf import FPDF
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 CONFIG_FILE = "config.json"
 
 class TabelaCustosApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Gerenciador de Tabelas de Custos")
+        self.title("Agro Planner")
         self.geometry("750x550")
         self.configure(bg="#f0f0f0")
 
@@ -35,7 +39,7 @@ class TabelaCustosApp(tk.Tk):
         frame_tabelas = tk.Frame(self, bg="#f0f0f0")
         frame_tabelas.pack(pady=10, fill="x")
 
-        tk.Label(frame_tabelas, text="Tabela:", bg="#f0f0f0", font=("Arial", 10)).pack(side="left", padx=5)
+        tk.Label(frame_tabelas, text="Tabela:", bg="#f0f0f0", font=("helvetica", 10)).pack(side="left", padx=5)
         self.combobox_tabelas = ttk.Combobox(frame_tabelas, values=list(self.tabelas.keys()), state="readonly", width=20)
         self.combobox_tabelas.set(self.tabela_atual)
         self.combobox_tabelas.pack(side="left", padx=5)
@@ -86,10 +90,127 @@ class TabelaCustosApp(tk.Tk):
         btn_editar = tk.Button(frame_botoes, text="Editar Item", command=self.editar_item, bg="#FF9800", fg="white", padx=10)
         btn_editar.pack(side="left", padx=10)
 
-        self.label_total = tk.Label(self, text="Total Geral: R$ 0.00", font=("Arial", 12), bg="#f0f0f0")
+        btn_imprimir = tk.Button(frame_botoes, text="Imprimir Tabela", command=self.gerar_pdf, bg="#607D8B", fg="white", padx=10)
+        btn_imprimir.pack(side="left", padx=10)
+
+        btn_grafico = tk.Button(frame_botoes, text="Gerar Gráfico", command=self.gerar_grafico, bg="#9C27B0", fg="white", padx=10)
+        btn_grafico.pack(side="left", padx=10)
+
+        self.label_total = tk.Label(self, text="Total Geral: R$ 0.00", font=("helvetica", 12), bg="#f0f0f0")
         self.label_total.pack(pady=10)
 
         self.atualizar_exibicao()
+
+    def gerar_grafico(self):
+        if not self.tabelas[self.tabela_atual]["itens"]:
+            messagebox.showwarning("Aviso", "A tabela está vazia!")
+            return
+
+        # Criar nova janela
+        janela_grafico = tk.Toplevel(self)
+        janela_grafico.title("Gráfico de Custos")
+        janela_grafico.geometry("800x600")
+
+        # Preparar dados
+        itens = self.tabelas[self.tabela_atual]["itens"]
+        nomes = [item["nome"] for item in itens]
+        valores = [item["total"] for item in itens]
+        cores = [item["cor"] or "#1f77b4" for item in itens]
+
+        # Criar figura
+        fig = plt.figure(figsize=(10, 6), dpi=100)
+        ax = fig.add_subplot(111)
+
+        # Plotar gráfico de barras
+        bars = ax.bar(nomes, valores, color=cores)
+        ax.set_title(f'Total por Item - {self.tabela_atual}')
+        ax.set_ylabel('Valor (R$)')
+        ax.tick_params(axis='x', rotation=45)
+
+        # Adicionar valores nas barras
+        for bar in bars:
+            height = bar.get_height()
+            ax.annotate(f'R$ {height:.2f}',
+                        xy=(bar.get_x() + bar.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha='center', va='bottom')
+
+        # Adicionar ao Tkinter
+        canvas = FigureCanvasTkAgg(fig, master=janela_grafico)
+        canvas.draw()
+        canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+
+        # Botão de fechar
+        btn_fechar = tk.Button(janela_grafico, text="Fechar", command=janela_grafico.destroy, bg="#F44336", fg="white")
+        btn_fechar.pack(pady=5)
+
+        # Fechar a figura quando a janela for fechada
+        janela_grafico.protocol("WM_DELETE_WINDOW", lambda: [plt.close(fig), janela_grafico.destroy()])
+
+    def gerar_pdf(self):
+        if not self.tabelas[self.tabela_atual]["itens"]:
+            messagebox.showwarning("Aviso", "A tabela está vazia!")
+            return
+
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("helvetica", size=12)
+
+        # Cabeçalho
+        pdf.set_font("helvetica", 'B', 16)
+        pdf.cell(0, 10, f'Tabela: {self.tabela_atual}', 0, 1, 'C')
+        pdf.ln(5)
+
+        # Data de emissão
+        pdf.set_font("helvetica", size=10)
+        pdf.cell(0, 10, f'Data: {datetime.now().strftime("%d/%m/%Y %H:%M")}', 0, 1, 'R')
+        pdf.ln(10)
+
+        # Cabeçalho da tabela
+        pdf.set_fill_color(200, 220, 255)
+        pdf.set_font("helvetica", 'B', 12)
+        colunas = ["Nome", "Custo Unitário", "Quantidade", "Total"]
+        larguras = [60, 40, 40, 40]
+
+        for i, col in enumerate(colunas):
+            pdf.cell(larguras[i], 10, col, 1, 0, 'C', 1)
+        pdf.ln()
+
+        # Itens
+        pdf.set_font("helvetica", size=10)
+        for item in self.tabelas[self.tabela_atual]["itens"]:
+            pdf.cell(larguras[0], 10, item["nome"], 1)
+            pdf.cell(larguras[1], 10, f'R$ {item["custo"]:.2f}', 1, 0, 'R')
+            pdf.cell(larguras[2], 10, f'{item["quantidade"]:.2f}', 1, 0, 'C')
+            pdf.cell(larguras[3], 10, f'R$ {item["total"]:.2f}', 1, 0, 'R')
+            pdf.ln()
+
+        # Total geral
+        pdf.ln(10)
+        pdf.set_font("helvetica", 'B', 12)
+        pdf.cell(0, 10, f'Total Geral: R$ {self.tabelas[self.tabela_atual]["total"]:.2f}', 0, 1, 'R')
+
+        # Salvar o PDF
+        default_name = f"tabela_{self.tabela_atual}_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf"
+        if self.data_folder:
+            default_path = os.path.join(self.data_folder, default_name)
+        else:
+            default_path = default_name
+
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".pdf",
+            filetypes=[("PDF Files", "*.pdf")],
+            initialfile=default_name,
+            initialdir=os.path.dirname(default_path)
+        )
+
+        if file_path:
+            try:
+                pdf.output(file_path)
+                messagebox.showinfo("Sucesso", f"PDF salvo em:\n{file_path}")
+            except Exception as e:
+                messagebox.showerror("Erro", f"Não foi possível salvar o PDF:\n{e}")
 
     def salvar_config(self):
         config = {"data_folder": self.data_folder} if self.data_folder else {}
